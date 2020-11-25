@@ -3,7 +3,7 @@
     --secondary-bg: #b18d8d;
     --tertiary-bg: #796969;
     --main-color: #700000;
-    --form-size: 500px;
+    --grid-size: 600px;
     --yes-color:rgb(44, 119, 37);
     --no-color:rgb(201, 15, 15);
 }
@@ -38,4 +38,31 @@ h1{
     font-size: 2em;
     text-align: center;
     color: var(--main-bg);
+}
+
+#board {
+    margin: auto;
+    padding-top: 100px;
+    height: var(--grid-size);
+    width: var(--grid-size);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
+
+#board:hover {
+    cursor: default;
+}
+
+.cell {
+    height: 100%;
+    width: 100%;
+    border: var(--main-color) 10px solid;
+    text-align: center;
+    line-height: 200px;
+    color: var(--main-color);
+}
+
+.temp-input {
+    color: var(--secondary-bg);
 }
