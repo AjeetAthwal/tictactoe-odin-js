@@ -24,16 +24,50 @@ const Gameboard = (() => {
 
     const isEmpty = () => {
         for (let row = 0; row < gridSize; row++)
-            for (let column = 0; column < columnNumber; column++)
+            for (let column = 0; column < gridSize; column++)
                 if (gameboard[row][column] !== "") return false;
         return true;
     }
+
+    const isFull = () => {
+        for (let row = 0; row < gridSize; row++)
+            for (let column = 0; column < gridSize; column++)
+                if (gameboard[row][column] === "") return false;
+        return true;
+    }
+
 
     const getGridSize = () => gridSize;
 
     const getCellInput = (row, column) => gameboard[row][column];
 
-    return {reset, isEmpty, playTurn, getGridSize, getCellInput};
+    const getColumn = (column) => {
+        const colArr = [];
+        for (let row = 0; row < gridSize; row++){
+            colArr.push(gameboard[row][column]);
+        }
+        return colArr;
+    }
+
+    const getRow = (row) => gameboard[row];
+
+    const getDiagonalTLBR = () => {
+        const arr = [];
+        for (let row = 0, column = 0; row < gridSize, column < gridSize; row++, column++)
+                arr.push(gameboard[row][column]);
+        return arr;
+    }
+
+    const getDiagonalBLTR = () => {
+        const arr = [];
+        for (let row = gridSize - 1, column = 0; row >= 0, column < gridSize; row--, column++)
+                arr.push(gameboard[row][column]);
+        return arr;
+    }
+
+    const getBoard = () => gameboard;
+
+    return {reset, isEmpty, isFull, playTurn, getGridSize, getCellInput, getColumn, getRow, getDiagonalTLBR, getDiagonalBLTR, getBoard};
 
 })();
 
@@ -73,6 +107,40 @@ const TurnHandler = (() => {
     return {playTurn, getCurrentTurn, getSymbol1, getSymbol2, changeFirstTurn};
 })();
 
+const handleGame = (() => {
+    const isVerticalWin = () => {
+        if (Gameboard.isEmpty()) return false;
+        for (let column = 0; column < Gameboard.getGridSize(); column++)
+            if(Gameboard.getColumn(column).every((value, index, arr) => value === arr[0] &&  value !== "")) return true;
+        return false;
+    };
+
+
+    const isHorizontalWin = () => {
+        if (Gameboard.isEmpty()) return false;
+        for (let row = 0; row < Gameboard.getGridSize(); row++)
+            if(Gameboard.getRow(row).every((value, index, arr) => value === arr[0] && value !== "")) return true;
+        return false;
+    };
+
+    const isDiagonalWin = () => {
+        if (Gameboard.isEmpty()) return false;
+        if(Gameboard.getDiagonalBLTR().every((value, index, arr) => value === arr[0] && value !== "")) return true;
+        if(Gameboard.getDiagonalTLBR().every((value, index, arr) => value === arr[0] && value !== "")) return true;
+        return false;
+    };
+
+    const isWinner = () => {
+        return isVerticalWin() || isHorizontalWin() || isDiagonalWin();
+    }
+
+    const isOver = () => Gameboard.isFull() || isWinner() ? true : false;
+
+    const isDraw = () => !isOver() || isWinner() ? false : true;
+
+    return {isOver, isWinner, isDraw, isDiagonalWin, isHorizontalWin, isVerticalWin};
+})();
+
 const domHandler = ((doc) => {
     const htmlBoard = doc.querySelector("#board");
 
@@ -86,7 +154,7 @@ const domHandler = ((doc) => {
         cell.dataset.column = column;
         cell.classList = "cell";
         cell.innerText = entry;
-        if (entry === "") {
+        if (entry === "" && !handleGame.isOver()) {
             cell.addEventListener("click", playTurn);
             cell.addEventListener("mouseover", hoverCell);
             cell.addEventListener("mouseout", hoverCell);
@@ -141,11 +209,14 @@ const domHandler = ((doc) => {
 
 const Player = (name, symbol) => {
     const setName = (newName) => name = newName;
+    let wins = 0;
 
     const getName = () => name;
     const getSymbol = () => symbol;
+    const getWins = () => wins;
+    const addWin = () => wins++;
 
-    return {setName, getName, getSymbol};
+    return {setName, getName, getSymbol, getWins, addWin};
 };
 
 const player1 = Player("Player 1", TurnHandler.getSymbol1());
