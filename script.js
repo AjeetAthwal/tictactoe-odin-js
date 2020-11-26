@@ -106,7 +106,7 @@ const domHandler = ((doc) => {
 
     const hoverCell = (e) => {
         const cell = e.target;
-        const currentTurn = cell.dataset.currentTurn;
+        const currentTurn = TurnHandler.getCurrentTurn();
 
         if (cell.innerText === "" ){
             cell.innerText = currentTurn;
