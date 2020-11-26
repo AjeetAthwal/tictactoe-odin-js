@@ -138,7 +138,12 @@ const handleGame = (() => {
 
     const isDraw = () => !isOver() || isWinner() ? false : true;
 
-    return {isOver, isWinner, isDraw, isDiagonalWin, isHorizontalWin, isVerticalWin};
+    const getWinnerSymbol = () => {
+        if (isWinner())
+            return TurnHandler.getCurrentTurn() === TurnHandler.getSymbol1() ? TurnHandler.getSymbol2() : TurnHandler.getSymbol1();
+    }
+
+    return {isOver, isWinner, isDraw, isDiagonalWin, isHorizontalWin, isVerticalWin, getWinnerSymbol};
 })();
 
 const domHandler = ((doc) => {
