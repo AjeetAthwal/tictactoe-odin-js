@@ -1,3 +1,44 @@
+const Gameboard = (() => {
+    // cache
+    const gameboard = [ 
+        ["","",""],
+        ["","",""],
+        ["","",""]
+    ];
+    const gridSize = 3;
+
+    // functions
+
+    const playTurn = (row, column, turn) => {
+        if (gameboard[row][column] === "") gameboard[row][column] = turn;
+        return gameboard[row][column];
+    }
+
+    const clearGameboard = () => {
+        for (let row = 0; row < gridSize; row++)
+            for (let column = 0; column < columnNumber; column++)
+            gameboard[row][column] = "";
+    }
+
+    const reset = () => clearGameboard();
+
+    const isEmpty = () => {
+        for (let row = 0; row < gridSize; row++)
+            for (let column = 0; column < columnNumber; column++)
+                if (gameboard[row][column] !== "") return false;
+        return true;
+    }
+
+    const getGridSize = () => gridSize;
+
+    const getCellInput = (row, column) => gameboard[row][column];
+
+    return {reset, isEmpty, playTurn, getGridSize, getCellInput};
+
+})();
+
+
+
 const TurnHandler = (() => {
     // cache
     const symbol1 = "X";
@@ -29,63 +70,8 @@ const TurnHandler = (() => {
         if (Gameboard.isEmpty()) turn = turn === symbol1 ? symbol2 : symbol1;
     }
 
-
-
     return {playTurn, getCurrentTurn, getSymbol1, getSymbol2, changeFirstTurn};
 })();
-
-const Gameboard = (() => {
-    // cache
-    const gameboard = [ 
-        ["","",""],
-        ["","",""],
-        ["","",""]
-    ];
-    const gridSize = 3;
-
-    
-    // functions
-
-    const playTurn = (row, column, turn) => {
-        if (gameboard[row][column] === "") gameboard[row][column] = turn;
-    }
-
-    const clearGameboard = () => {
-        for (let row = 0; row < gridSize; row++)
-            for (let column = 0; column < columnNumber; column++)
-            gameboard[row][column] = "";
-    }
-
-    const reset = (firstTurn) => {
-        clearGameboard();
-    }
-
-    const isEmpty = () => {
-        for (let row = 0; row < gridSize; row++)
-            for (let column = 0; column < columnNumber; column++)
-                if (gameboard[row][column] !== "") return false;
-        return true;
-    }
-
-    const getGridSize = () => gridSize;
-
-    const getCellInput = (row, column) => gameboard[row][column];
-
-    return {reset, isEmpty, playTurn, getGridSize, getCellInput};
-
-})();
-
-const Player = (name, symbol) => {
-    const setName = (newName) => name = newName;
-
-    const getName = () => name;
-    const getSymbol = () => symbol;
-
-    return {setName, getName, getSymbol};
-};
-
-const player1 = Player("Player 1", TurnHandler.getSymbol1());
-const player2 = Player("Player 2", TurnHandler.getSymbol2());
 
 const domHandler = ((doc) => {
     const htmlBoard = doc.querySelector("#board");
@@ -110,16 +96,17 @@ const domHandler = ((doc) => {
     }
 
     const playTurn = (e) => {
-        const row = e.target.dataset.row;
-        const column = e.target.dataset.column;
-
-        Gameboard.playTurn(row, column, TurnHandler.playTurn());
-        render();
+        const cell = e.target;
+        const row = cell.dataset.row;
+        const column = cell.dataset.column;
+        
+        cell.dataset.entry = Gameboard.playTurn(row, column, TurnHandler.playTurn());
+        render(TurnHandler.getCurrentTurn());
     }
 
     const hoverCell = (e) => {
         const cell = e.target;
-        const currentTurn = TurnHandler.getCurrentTurn();
+        const currentTurn = cell.dataset.currentTurn;
 
         if (cell.innerText === "" ){
             cell.innerText = currentTurn;
@@ -133,9 +120,9 @@ const domHandler = ((doc) => {
 
     // render
 
-    const render = () => {
+    const render = (currentTurn) => {
         clearGameboardHtml();
-        displayGameboardHtml();
+        displayGameboardHtml(currentTurn);
     }
 
     const clearGameboardHtml = () => {
@@ -151,3 +138,15 @@ const domHandler = ((doc) => {
     render();
 
 })(document);
+
+const Player = (name, symbol) => {
+    const setName = (newName) => name = newName;
+
+    const getName = () => name;
+    const getSymbol = () => symbol;
+
+    return {setName, getName, getSymbol};
+};
+
+const player1 = Player("Player 1", TurnHandler.getSymbol1());
+const player2 = Player("Player 2", TurnHandler.getSymbol2());
