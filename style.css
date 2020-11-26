@@ -3,7 +3,7 @@
     --secondary-bg: #b18d8d;
     --tertiary-bg: #796969;
     --main-color: #700000;
-    --grid-size: 600px;
+    --grid-size: 800px;
     --yes-color:rgb(44, 119, 37);
     --no-color:rgb(201, 15, 15);
 }
@@ -40,30 +40,61 @@ h1{
     color: var(--main-bg);
 }
 
-#board {
+main{
+    height: var(--grid-size);
+    width: var(--grid-size);
     margin: auto;
     padding-top: 100px;
     padding-bottom: 100px;
-    height: var(--grid-size);
-    width: var(--grid-size);
     display: grid;
+    grid-template: 
+    "message message message message"
+    "board board board player-info"
+    "board board board player-info"
+    "board board board player-info";
+}
+
+#board {
+    height: 100%;
+    width: 100%;
+    grid-area: board;
+    display: grid;
+    background-color: var(--main-color);
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
+
+    gap: 20px;
 }
 
 #board:hover {
     cursor: default;
 }
 
+#message {
+    grid-area: message;
+    height: 100%;
+    width: 100%;
+    background-color: aliceblue;
+}
+
+#player-info {
+    grid-area: player-info;
+    height: 100%;
+    width: 100%;
+    background-color: skyblue;
+}
+
 .cell {
     height: 100%;
     width: 100%;
-    border: var(--main-color) 10px solid;
     text-align: center;
-    line-height: 200px;
     color: var(--main-color);
+    background-color: var(--main-bg);
 }
 
+.cell:hover{
+    cursor: pointer;
+}
 .temp-input {
     color: var(--secondary-bg);
 }
