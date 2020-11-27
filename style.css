@@ -4,6 +4,8 @@
     --tertiary-bg: #796969;
     --main-color: #700000;
     --grid-size: 800px;
+    --btn-switch-height: 25px;
+    --padding-size: 75px;
     --yes-color:rgb(44, 119, 37);
     --no-color:rgb(201, 15, 15);
 }
@@ -41,17 +43,35 @@ h1{
 }
 
 main{
-    height: var(--grid-size);
+    height: calc(var(--grid-size) + var(--btn-switch-height));
     width: var(--grid-size);
     margin: auto;
-    padding-top: 100px;
-    padding-bottom: 100px;
+    padding-top: var(--padding-size);
+    padding-bottom: var(--padding-size);
+    display: flex;
+    flex-direction: column;
+    background-color: beige;
+}
+
+#btn-switches{
+    height: var(--btn-switch-height);
+    width: 100%;
+    background-color: black;
+}
+
+#ttt-game{
+    height: var(--grid-size);
+    width: 100%;
+    margin: auto;
     display: grid;
     grid-template: 
     "message message message buttons"
     "board board board player-info"
     "board board board player-info"
     "board board board player-info";
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    background-color: pink;
 }
 
 #board {
