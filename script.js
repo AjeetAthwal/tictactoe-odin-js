@@ -184,8 +184,7 @@ const ScoreTracker = (() => {
         if (handleGame.isOver()){
             if (handleGame.isWinner()){
                 addWin(handleGame.getWinner());
-            }
-            else addDraw();
+            } else addDraw();
             gamesPlayed++;
         }
     }
@@ -219,7 +218,6 @@ const FinalMessageController = ((doc) => {
             alreadyWin = true;
         if (!alreadyWin){
             const winningPlayer = handleGame.getWinner();
-            ScoreTracker.addWin(winningPlayer);
             finalMessage.innerText = `${winningPlayer} wins!`;
         }
     };
@@ -276,8 +274,8 @@ const PlayerInfoController = ((doc) => {
         if (playerID === player1.getID()) player1.setName(newName);
         else player2.setName(newName);
         
-        render();
-        MessageController.render();
+        reRender();
+        
     }
 
     const editNameForm = (e) => {
@@ -309,6 +307,11 @@ const PlayerInfoController = ((doc) => {
         addPlayer(player2);
         addDraws();
     };
+
+    const reRender = () => {
+        render();
+        MessageController.render();
+    }
     
     return {render};
 })(document);
@@ -318,6 +321,149 @@ const InfoController = (() => {
         PlayerInfoController.render();
     };
     
+    return {render};
+})();
+
+
+const ChangePlayerButtonController = ((doc) => {
+
+    const btnDiv = doc.querySelector("#btns")
+    let btn = doc.querySelector("#change-player-btn");
+
+    const removeBtn = () => btn.parentNode.removeChild(btn);
+
+    const changePlayer = (e) => {
+        if (e.target.classList.value === "yes-btn"){
+            TurnHandler.changeTurn();
+            reRender();
+        }
+    }
+
+    const addBtn = () => {
+        btn = doc.createElement("button");
+
+        if (!Gameboard.isEmpty() && !handleGame.isOver()) {
+            btn.classList = "gray-btn"
+        }
+        else {
+            btn.classList = "yes-btn"
+        }
+
+        btn.innerText = "Toggle Player to Start"
+        
+        btn.addEventListener("click", changePlayer);
+        btnDiv.appendChild(btn);
+    }
+
+    const reRender = () => {
+        MessageController.render();
+        render();
+    }
+
+    const render = () => {
+        removeBtn();
+        addBtn();
+    }
+
+    return {render};
+
+
+})(document);
+
+const ResetScoreButtonController = ((doc) => {
+    const btnDiv = doc.querySelector("#btns")
+    let btn = doc.querySelector("#reset-score-btn");
+
+    const removeBtn = () => btn.parentNode.removeChild(btn);
+
+    const resetScore = (e) => {
+        if (e.target.classList.value === "yes-btn"){
+            ScoreTracker.resetScores();
+            reRender();
+        }
+    }
+
+    const addBtn = () => {
+        btn = doc.createElement("button");
+        btn.innerText = "Reset Scores";
+
+        if (ScoreTracker.getGamesPlayed() === 0) btn.classList = "gray-btn";
+        else btn.classList = "yes-btn";        
+        
+        btn.addEventListener("click", resetScore);
+        btnDiv.appendChild(btn);
+    }
+
+    const render = () => {
+        removeBtn();
+        addBtn();
+    }
+
+    const reRender = () => {
+        InfoController.render();
+        render();
+        ChangePlayerButtonController.render();
+    }
+
+    return {render};
+
+})(document);
+
+const ResetGameButtonController = ((doc) => {
+    const btnDiv = doc.querySelector("#btns")
+    let btn = doc.querySelector("#reset-game-btn");
+
+    const removeBtn = () => btn.parentNode.removeChild(btn);
+
+    const resetGame = (e) => {
+        if (e.target.classList.value === "yes-btn"){
+            Gameboard.reset();
+            reRender();
+        }
+    }
+
+    const addBtn = () => {
+        btn = doc.createElement("button");
+        if (handleGame.isOver()) {
+            btn.innerText = "New Game";
+            btn.classList = "yes-btn"
+        } else if (!Gameboard.isEmpty() && !handleGame.isOver()) {
+            btn.innerText = "Reset Game";
+            btn.classList = "yes-btn"
+        } else {
+            btn.innerText = "Reset Game";
+            btn.classList = "gray-btn"
+        } 
+
+        btn.addEventListener("click", resetGame);
+        btnDiv.appendChild(btn);
+    }
+    
+    const reRender = () => {
+        BoardController.render();
+        InfoController.render();
+        render();
+        ResetScoreButtonController.render();
+        ChangePlayerButtonController.render();
+    }
+
+    const render = () => {
+        removeBtn();
+        addBtn();
+    }
+
+    return {render};
+
+})(document);
+
+
+const ButtonsController = (() => {
+    const render = () => {
+        ResetGameButtonController.render();
+        ResetScoreButtonController.render();
+        ChangePlayerButtonController.render();
+    }
+
     return {render};
 })();
 
@@ -349,8 +495,8 @@ const BoardController = ((doc) => {
         const column = cell.dataset.column;
         
         cell.dataset.entry = Gameboard.playTurn(row, column, TurnHandler.playTurn());
-        
-        render();
+        ScoreTracker.addResult();
+        reRender();
     }
 
     const hoverCell = (e) => {
@@ -372,9 +518,13 @@ const BoardController = ((doc) => {
     const render = () => {
         clearGameboardHtml();
         displayGameboardHtml();
-        middleOfGameDisplay();
-        gameOverDisplay();
+    }
+
+    const reRender = () => {
+        render();
         MessageController.render();
+        ButtonsController.render();
+        InfoController.render();
     }
 
     const clearGameboardHtml = () => {
@@ -385,74 +535,20 @@ const BoardController = ((doc) => {
         for (let row = 0; row < Gameboard.getGridSize(); row++)
             for (let column = 0; column < Gameboard.getGridSize(); column++)
                 addCell(htmlBoard, row, column);
-    }
-
-    const gameOverDisplay = () => {
-        const resetGameBtn = doc.querySelector("#reset-game-btn");
-        if (handleGame.isOver()) {
-            resetGameBtn.innerText = "New Game";
-            resetGameBtn.classList = "yes-btn"
-        }
-        else {
-            resetGameBtn.innerText = "Reset Game";
-        }
-    }
-
-    const middleOfGameDisplay = () => {
-        const resetGameBtn = doc.querySelector("#reset-game-btn");
-        const changePlayerBtn = doc.querySelector("#change-player-btn");
-        if (!Gameboard.isEmpty() && !handleGame.isOver()) {
-            changePlayerBtn.classList = "gray-btn"
-            resetGameBtn.classList = "yes-btn"
-        }
-        else {
-            changePlayerBtn.classList = "yes-btn"
-            resetGameBtn.classList = "gray-btn"
-        }
-    }        
+    }      
 
     return {render}
 
 })(document);
 
-const ButtonsController = ((doc) => {
-    const btns = doc.querySelector("#buttons");
-    const resetGameBtn = doc.querySelector("#reset-game-btn");
-    const resetScoreBtn = doc.querySelector("#reset-score-btn");
-    const changePlayerBtn = doc.querySelector("#change-player-btn");
 
-    const resetGame = (e) => {
-        if (e.target.classList.value === "yes-btn"){
-            Gameboard.reset();
-            BoardController.render();
-            InfoController.render();
-        }
-    }
-
-    const resetScore = (e) => {
-        if (e.target.classList.value === "yes-btn"){
-            ScoreTracker.resetScores();
-            InfoController.render();
-        }
-    }
-
-    const changePlayer = (e) => {
-        if (e.target.classList.value === "yes-btn"){
-            TurnHandler.changeTurn();
-            BoardController.render();
-        }
-    }
-
-    resetGameBtn.addEventListener("click", resetGame);
-    resetScoreBtn.addEventListener("click", resetScore);
-    changePlayerBtn.addEventListener("click", changePlayer);
-
-})(document);
 
 const mainController = ((doc) => {
     const render = () => {
         BoardController.render();
+        MessageController.render();
         InfoController.render();
+        ButtonsController.render();
     }
 
     render();
