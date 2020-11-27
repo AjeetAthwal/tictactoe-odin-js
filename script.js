@@ -212,14 +212,8 @@ const FinalMessageController = ((doc) => {
     const finalMessage = doc.querySelector("#final-message")
 
     const winnerMessageDisplay = () => {
-        const oldMessage = finalMessage.innerText;
-        alreadyWin = false;
-        if (oldMessage.substring(oldMessage.indexOf("!") - 4, oldMessage.indexOf("!")) === "wins")
-            alreadyWin = true;
-        if (!alreadyWin){
-            const winningPlayer = handleGame.getWinner();
-            finalMessage.innerText = `${winningPlayer} wins!`;
-        }
+        const winningPlayer = handleGame.getWinner();
+        finalMessage.innerText = `${winningPlayer} wins!`;
     };
     
     const drawMessageDisplay = () => finalMessage.innerText = `Draw!`;
@@ -356,7 +350,7 @@ const ChangePlayerButtonController = ((doc) => {
     }
 
     const reRender = () => {
-        MessageController.render();
+        TurnMessageController.render();
         render();
     }
 
@@ -442,6 +436,7 @@ const ResetGameButtonController = ((doc) => {
     const reRender = () => {
         BoardController.render();
         InfoController.render();
+        MessageController.render();
         render();
         ResetScoreButtonController.render();
         ChangePlayerButtonController.render();
