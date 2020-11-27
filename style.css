@@ -107,7 +107,7 @@ main{
     justify-content: center;
 }
 
-#player-info {
+#info {
     grid-area: player-info;
     height: 100%;
     width: 100%;

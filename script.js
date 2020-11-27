@@ -109,6 +109,7 @@ const TurnHandler = (() => {
 })();
 
 const Player = (name, symbol) => {
+    const id = name.replace(/\s/g, '').toLowerCase();
     const setName = (newName) => name = newName;
     let wins = 0;
 
@@ -116,12 +117,18 @@ const Player = (name, symbol) => {
     const getSymbol = () => symbol;
     const getWins = () => wins;
     const addWin = () => wins++;
+    const getID = () => id;
+    const getquerySelector = () => `#${id}-info`
 
-    return {setName, getName, getSymbol, getWins, addWin};
+    const resetWins = () => wins = 0;
+
+    return {setName, getName, getSymbol, getWins, addWin, getID, getquerySelector, resetWins};
 };
 
 const player1 = Player("Player 1", TurnHandler.getSymbol1());
 const player2 = Player("Player 2", TurnHandler.getSymbol2());
+
+const players = [player1, player2];
 
 const handleGame = (() => {
     const isVerticalWin = () => {
@@ -196,7 +203,14 @@ const ScoreTracker = (() => {
 
     const getGamesPlayed = () => gamesPlayed;
 
-    return {addResult, getPlayer1Wins, getPlayer2Wins, getDraws, getGamesPlayed}
+    const resetScores = () => {
+        player1.resetWins();
+        player2.resetWins();
+        draws = 0;
+        gamesPlayed = 0;
+    }
+
+    return {addResult, getPlayer1Wins, getPlayer2Wins, getDraws, getGamesPlayed, resetScores, addWin}
 
 })();
 
@@ -205,6 +219,7 @@ const MessageController = ((doc) => {
 
     const winnerMessage = () => {
         const winningPlayer = handleGame.getWinner();
+        ScoreTracker.addWin(winningPlayer);
         message.innerText = `${winningPlayer} wins!`;
     };
     
@@ -227,14 +242,21 @@ const MessageController = ((doc) => {
 })(document);
 
 const InfoController = ((doc) => {
-    const info = doc.querySelector("#player-info");
+    const info = doc.querySelector("#info");
 
-    const addPlayer1 = () => {
-        info.innerText = `${player1.getName()}`;
+    const playerInfo = {
+        player1 : doc.querySelector(player1.getquerySelector()),
+        player2 : doc.querySelector(player2.getquerySelector())
+    };
+
+
+    const addPlayer = (player) => {
+            playerInfo[player.getID()].innerText = `${player.getName()} - ${player.getSymbol()} - ${player.getWins()}`;
+        
     };
 
     const addPlayer2 = () => {
-        info.innerText = `${player2.getName()}`;
+        player2Info.innerText = `${player2.getName()} - ${player2.getSymbol()}`;
     };
     
     const addDraws = () => {
@@ -242,7 +264,8 @@ const InfoController = ((doc) => {
     }
 
     const render = () => {
-        addPlayer1();
+        addPlayer(player1);
+        addPlayer(player2);
     };
     
     return {render};
@@ -318,15 +341,22 @@ const BoardController = ((doc) => {
 
 })(document);
 
-const ButtonController = ((doc) => {
+const ButtonsController = ((doc) => {
     const btns = doc.querySelector("#buttons");
-    const resetBtn = doc.querySelector("#reset-btn");
+    const resetGameBtn = doc.querySelector("#reset-game-btn");
+    const resetScoreBtn = doc.querySelector("#reset-score-btn");
 
     const resetGame = (e) => {
         Gameboard.reset();
         BoardController.render();
     }
 
-    resetBtn.addEventListener("click", resetGame);
+    const resetScore = (e) => {
+        ScoreTracker.resetScores();
+        InfoController.render();
+    }
+
+    resetGameBtn.addEventListener("click", resetGame);
+    resetScoreBtn.addEventListener("click", resetScore);
 
 })(document);
