@@ -146,13 +146,30 @@ const handleGame = (() => {
     return {isOver, isWinner, isDraw, isDiagonalWin, isHorizontalWin, isVerticalWin, getWinnerSymbol};
 })();
 
+
+const Player = (name, symbol) => {
+    const setName = (newName) => name = newName;
+    let wins = 0;
+
+    const getName = () => name;
+    const getSymbol = () => symbol;
+    const getWins = () => wins;
+    const addWin = () => wins++;
+
+    return {setName, getName, getSymbol, getWins, addWin};
+};
+
+const player1 = Player("Player 1", TurnHandler.getSymbol1());
+const player2 = Player("Player 2", TurnHandler.getSymbol2());
+
 const MessageController = ((doc) => {
     const message = doc.querySelector("#message");
 
     const winnerMessage = () => {
-        message.innerText = `${handleGame.getWinnerSymbol()} wins!`;
+        const winnerSymbol = handleGame.getWinnerSymbol();
+        const winningPlayer = winnerSymbol === player1.getSymbol() ? player1.getName() : player2.getName();
+        message.innerText = `${winningPlayer} wins!`;
     };
-
     
     const render = () => {
         if (handleGame.isWinner()) winnerMessage();
@@ -164,13 +181,20 @@ const MessageController = ((doc) => {
 const InfoController = ((doc) => {
     const info = doc.querySelector("#player-info");
 
-    const add = () => {
-        message.innerText = `${handleGame.getWinnerSymbol} wins!`;
+    const addPlayer1 = () => {
+        info.innerText = `${player1.getName()}`;
     };
 
+    const addPlayer2 = () => {
+        info.innerText = `${player2.getName()}`;
+    };
     
+    const addDraws = () => {
+        // add draws
+    }
+
     const render = () => {
-        if (handleGame.isWinner()) winnerMessage();
+        addPlayer1();
     };
     
     return {render};
@@ -204,7 +228,7 @@ const BoardController = ((doc) => {
         const column = cell.dataset.column;
         
         cell.dataset.entry = Gameboard.playTurn(row, column, TurnHandler.playTurn());
-        render(TurnHandler.getCurrentTurn());
+        render();
     }
 
     const hoverCell = (e) => {
@@ -227,6 +251,7 @@ const BoardController = ((doc) => {
         clearGameboardHtml();
         displayGameboardHtml();
         MessageController.render();
+        InfoController.render();
     }
 
     const clearGameboardHtml = () => {
@@ -257,18 +282,3 @@ const ButtonController = ((doc) => {
     resetBtn.addEventListener("click", resetGame);
 
 })(document);
-
-const Player = (name, symbol) => {
-    const setName = (newName) => name = newName;
-    let wins = 0;
-
-    const getName = () => name;
-    const getSymbol = () => symbol;
-    const getWins = () => wins;
-    const addWin = () => wins++;
-
-    return {setName, getName, getSymbol, getWins, addWin};
-};
-
-const player1 = Player("Player 1", TurnHandler.getSymbol1());
-const player2 = Player("Player 2", TurnHandler.getSymbol2());
