@@ -209,11 +209,8 @@ const ScoreTracker = (() => {
 
 })();
 
-const MessageController = ((doc) => {
-
-    const message = doc.querySelector("#message");
-    const turnMessage = message.querySelector("#turn-message")
-    const finalMessage = message.querySelector("#final-message")
+const FinalMessageController = ((doc) => {
+    const finalMessage = doc.querySelector("#final-message")
 
     const winnerMessageDisplay = () => {
         const oldMessage = finalMessage.innerText;
@@ -230,26 +227,37 @@ const MessageController = ((doc) => {
     const drawMessageDisplay = () => finalMessage.innerText = `Draw!`;
     const noFinalMessageDisplay = () => finalMessage.innerText = ``;
 
-    const turnMessageDisplay = () => {
-        playerTurn = TurnHandler.getCurrentTurn();
-        turnMessage.innerText = `${playerTurn}'s turn next!`;
-    };
-
-    const finalMessageDisplay = () => {
+    const render = () => {
         if (handleGame.isWinner()) winnerMessageDisplay();
         else if (handleGame.isDraw()) drawMessageDisplay();
         else noFinalMessageDisplay();
     }
+    
+    return {render};
+})(document);
 
+const TurnMessageController = ((doc) => {
+    const turnMessage = doc.querySelector("#turn-message")
+    
     const render = () => {
-        finalMessageDisplay()
-        turnMessageDisplay();
+        const playerTurn = TurnHandler.getCurrentTurn();
+        turnMessage.innerText = `${playerTurn}'s turn next!`;
     };
     
     return {render};
 })(document);
 
-const InfoController = ((doc) => {
+
+const MessageController = (() => {
+    const render = () => {
+        FinalMessageController.render()
+        TurnMessageController.render();
+    };
+    
+    return {render};
+})();
+
+const PlayerInfoController = ((doc) => {
     const info = doc.querySelector("#info");
 
     const playerInfoDivs = {
@@ -304,6 +312,14 @@ const InfoController = ((doc) => {
     
     return {render};
 })(document);
+
+const InfoController = (() => {
+    const render = () => {
+        PlayerInfoController.render();
+    };
+    
+    return {render};
+})();
 
 const BoardController = ((doc) => {
     const htmlBoard = doc.querySelector("#board");
