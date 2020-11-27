@@ -105,6 +105,11 @@ main{
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
+}
+
+#btns>button{
+    margin: auto;
 }
 
 #info {
@@ -134,4 +139,28 @@ main{
 }
 .temp-input {
     color: var(--secondary-bg);
+}
+
+
+button, input[type=submit]{
+    color: white;
+    outline: none;
+    border-radius: 3px;
+    cursor: pointer;
+    border: none;
+    height: 50px;
+    width: 150px;
+    font-size: 0.5em;
+}
+.off-table{
+    background-color: var(--main-bg);
+    border: none;
+}
+
+.yes-btn{
+    background-color: var(--yes-color);
+}
+
+.no-btn{
+    background-color: var(--no-color);
 }

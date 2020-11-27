@@ -89,14 +89,9 @@ const TurnHandler = (() => {
     }
 
     const getCurrentTurnSymbol = () => turn;
-
     const getSymbol1 = () => symbol1;
-
     const getSymbol2 = () => symbol2;
-
-    const changeFirstTurn = () => {
-        if (Gameboard.isEmpty()) turn = turn === symbol1 ? symbol2 : symbol1;
-    }
+    const changeTurn = () => turn = turn === symbol1 ? symbol2 : symbol1
 
     const getPlayerNameFromSymbol = (symbol) => {
         return symbol === player1.getSymbol() ? player1.getName() : player2.getName();
@@ -105,7 +100,7 @@ const TurnHandler = (() => {
     const getCurrentTurn = () => getPlayerNameFromSymbol(turn)
 
 
-    return {playTurn, getCurrentTurnSymbol, getSymbol1, getSymbol2, changeFirstTurn, getCurrentTurn, getPlayerNameFromSymbol};
+    return {playTurn, getCurrentTurnSymbol, getSymbol1, getSymbol2, changeTurn, getCurrentTurn, getPlayerNameFromSymbol};
 })();
 
 const Player = (name, symbol) => {
@@ -215,12 +210,20 @@ const ScoreTracker = (() => {
 })();
 
 const MessageController = ((doc) => {
+    // winner message
+    // turn message
     const message = doc.querySelector("#message");
 
     const winnerMessage = () => {
-        const winningPlayer = handleGame.getWinner();
-        ScoreTracker.addWin(winningPlayer);
-        message.innerText = `${winningPlayer} wins!`;
+        const oldMessage = message.innerText;
+        alreadyWin = false;
+        if (oldMessage.substring(oldMessage.indexOf("!") - 4, oldMessage.indexOf("!")) === "wins")
+            alreadyWin = true;
+        if (!alreadyWin){
+            const winningPlayer = handleGame.getWinner();
+            ScoreTracker.addWin(winningPlayer);
+            message.innerText = `${winningPlayer} wins!`;
+        }
     };
     
     const drawMessage = () => {
@@ -244,19 +247,44 @@ const MessageController = ((doc) => {
 const InfoController = ((doc) => {
     const info = doc.querySelector("#info");
 
-    const playerInfo = {
+    const playerInfoDivs = {
         player1 : doc.querySelector(player1.getquerySelector()),
         player2 : doc.querySelector(player2.getquerySelector())
     };
 
+    const drawDiv = doc.querySelector("#draw-info");
+
+    const changePlayerName = (e) => {
+        e.preventDefault();
+        const newName = e.target.querySelector("input").value;
+        const playerIDElement = e.target.parentElement.id
+        const playerID = playerIDElement.substring(0, playerIDElement.indexOf("-"));
+        
+        if (playerID === player1.getID()) player1.setName(newName);
+        else player2.setName(newName);
+        
+        render();
+        MessageController.render();
+    }
+
+    const editNameForm = (e) => {
+        const playerInfoDiv = e.target;
+        playerInfoDiv.innerText = "";
+        const playerNameForm = doc.createElement("form");
+        playerNameForm.addEventListener("submit", changePlayerName)
+
+        const formInput = doc.createElement("input");
+
+        playerNameForm.appendChild(formInput);
+
+        playerInfoDiv.appendChild(playerNameForm);
+    }
 
     const addPlayer = (player) => {
-            playerInfo[player.getID()].innerText = `${player.getName()} - ${player.getSymbol()} - ${player.getWins()}`;
+        const playerInfoDiv = playerInfoDivs[player.getID()];
+        playerInfoDiv.innerText = `${player.getName()} - ${player.getSymbol()} - ${player.getWins()}`;
+        playerInfoDiv.addEventListener("click", editNameForm);
         
-    };
-
-    const addPlayer2 = () => {
-        player2Info.innerText = `${player2.getName()} - ${player2.getSymbol()}`;
     };
     
     const addDraws = () => {
@@ -266,6 +294,7 @@ const InfoController = ((doc) => {
     const render = () => {
         addPlayer(player1);
         addPlayer(player2);
+        addDraws();
     };
     
     return {render};
@@ -299,6 +328,7 @@ const BoardController = ((doc) => {
         const column = cell.dataset.column;
         
         cell.dataset.entry = Gameboard.playTurn(row, column, TurnHandler.playTurn());
+        
         render();
     }
 
@@ -321,8 +351,9 @@ const BoardController = ((doc) => {
     const render = () => {
         clearGameboardHtml();
         displayGameboardHtml();
+        middleOfGameDisplay();
+        gameOverDisplay();
         MessageController.render();
-        InfoController.render();
     }
 
     const clearGameboardHtml = () => {
@@ -335,7 +366,29 @@ const BoardController = ((doc) => {
                 addCell(htmlBoard, row, column);
     }
 
-    render();
+    const gameOverDisplay = () => {
+        const resetGameBtn = doc.querySelector("#reset-game-btn");
+        if (handleGame.isOver()) {
+            resetGameBtn.innerText = "New Game";
+            resetGameBtn.classList = "yes-btn"
+        }
+        else {
+            resetGameBtn.innerText = "Reset Game";
+        }
+    }
+
+    const middleOfGameDisplay = () => {
+        const resetGameBtn = doc.querySelector("#reset-game-btn");
+        const changePlayerBtn = doc.querySelector("#change-player-btn");
+        if (!Gameboard.isEmpty() && !handleGame.isOver()) {
+            changePlayerBtn.classList = "gray-btn"
+            resetGameBtn.classList = "yes-btn"
+        }
+        else {
+            changePlayerBtn.classList = "yes-btn"
+            resetGameBtn.classList = "gray-btn"
+        }
+    }        
 
     return {render}
 
@@ -345,10 +398,12 @@ const ButtonsController = ((doc) => {
     const btns = doc.querySelector("#buttons");
     const resetGameBtn = doc.querySelector("#reset-game-btn");
     const resetScoreBtn = doc.querySelector("#reset-score-btn");
+    const changePlayerBtn = doc.querySelector("#change-player-btn");
 
     const resetGame = (e) => {
         Gameboard.reset();
         BoardController.render();
+        InfoController.render();
     }
 
     const resetScore = (e) => {
@@ -356,7 +411,25 @@ const ButtonsController = ((doc) => {
         InfoController.render();
     }
 
+    const changePlayer = (e) => {
+        if (e.target.classList.value === "yes-btn"){
+            TurnHandler.changeTurn();
+            BoardController.render();
+        }
+    }
+
     resetGameBtn.addEventListener("click", resetGame);
     resetScoreBtn.addEventListener("click", resetScore);
+    changePlayerBtn.addEventListener("click", changePlayer);
 
 })(document);
+
+const mainController = ((doc) => {
+    const render = () => {
+        BoardController.render();
+        InfoController.render();
+    }
+
+    render();
+
+})(document)
