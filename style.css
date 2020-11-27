@@ -119,7 +119,7 @@ main{
     flex-direction: column;
 }
 
-#btns>button{
+#btns>div{
     margin: auto;
 }
 

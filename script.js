@@ -320,11 +320,9 @@ const InfoController = (() => {
 
 
 const ChangePlayerButtonController = ((doc) => {
+    const btnDiv = doc.querySelector("#change-player-btn");
 
-    const btnDiv = doc.querySelector("#btns")
-    let btn = doc.querySelector("#change-player-btn");
-
-    const removeBtn = () => btn.parentNode.removeChild(btn);
+    const removeBtn = () => btnDiv.removeChild(btnDiv.firstElementChild);
 
     const changePlayer = (e) => {
         if (e.target.classList.value === "yes-btn"){
@@ -365,10 +363,9 @@ const ChangePlayerButtonController = ((doc) => {
 })(document);
 
 const ResetScoreButtonController = ((doc) => {
-    const btnDiv = doc.querySelector("#btns")
-    let btn = doc.querySelector("#reset-score-btn");
+    const btnDiv = doc.querySelector("#reset-score-btn");
 
-    const removeBtn = () => btn.parentNode.removeChild(btn);
+    const removeBtn = () => btnDiv.removeChild(btnDiv.firstElementChild);
 
     const resetScore = (e) => {
         if (e.target.classList.value === "yes-btn"){
@@ -404,10 +401,9 @@ const ResetScoreButtonController = ((doc) => {
 })(document);
 
 const ResetGameButtonController = ((doc) => {
-    const btnDiv = doc.querySelector("#btns")
-    let btn = doc.querySelector("#reset-game-btn");
+    const btnDiv = doc.querySelector("#reset-game-btn");
 
-    const removeBtn = () => btn.parentNode.removeChild(btn);
+    const removeBtn = () => btnDiv.removeChild(btnDiv.firstElementChild);
 
     const resetGame = (e) => {
         if (e.target.classList.value === "yes-btn"){
@@ -438,7 +434,6 @@ const ResetGameButtonController = ((doc) => {
         InfoController.render();
         MessageController.render();
         render();
-        ResetScoreButtonController.render();
         ChangePlayerButtonController.render();
     }
 
