@@ -8,6 +8,7 @@
     --padding-size: 75px;
     --yes-color:rgb(44, 119, 37);
     --no-color:rgb(201, 15, 15);
+    --gray-color:rgb(180, 180, 180);
 }
 
 header{
@@ -171,6 +172,10 @@ button, input[type=submit]{
     background-color: var(--yes-color);
 }
 
+.gray-btn{
+    background-color: var(--gray-color);
+    cursor: default;
+}
 .no-btn{
     background-color: var(--no-color);
 }

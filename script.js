@@ -422,14 +422,18 @@ const ButtonsController = ((doc) => {
     const changePlayerBtn = doc.querySelector("#change-player-btn");
 
     const resetGame = (e) => {
-        Gameboard.reset();
-        BoardController.render();
-        InfoController.render();
+        if (e.target.classList.value === "yes-btn"){
+            Gameboard.reset();
+            BoardController.render();
+            InfoController.render();
+        }
     }
 
     const resetScore = (e) => {
-        ScoreTracker.resetScores();
-        InfoController.render();
+        if (e.target.classList.value === "yes-btn"){
+            ScoreTracker.resetScores();
+            InfoController.render();
+        }
     }
 
     const changePlayer = (e) => {
