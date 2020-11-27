@@ -44,7 +44,7 @@ h1{
 
 main{
     height: calc(var(--grid-size) + var(--btn-switch-height));
-    width: var(--grid-size);
+    width: calc(var(--grid-size) + var(--grid-size) * 1 / 5);
     margin: auto;
     padding-top: var(--padding-size);
     padding-bottom: var(--padding-size);
@@ -65,11 +65,11 @@ main{
     margin: auto;
     display: grid;
     grid-template: 
-    "message message message buttons"
-    "board board board player-info"
-    "board board board player-info"
-    "board board board player-info";
-    grid-template-columns: repeat(4, 1fr);
+    "message message message message buttons"
+    "board board board player-info player-info"
+    "board board board player-info player-info"
+    "board board board player-info player-info";
+    grid-template-columns: repeat(5, 1fr);
     grid-template-rows: repeat(4, 1fr);
     background-color: pink;
 }
