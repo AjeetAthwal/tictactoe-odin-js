@@ -48,7 +48,7 @@ main{
     padding-bottom: 100px;
     display: grid;
     grid-template: 
-    "message message message message"
+    "message message message buttons"
     "board board board player-info"
     "board board board player-info"
     "board board board player-info";
@@ -77,6 +77,13 @@ main{
     background-color: aliceblue;
 }
 
+#btns {
+    grid-area: buttons;
+    height: 100%;
+    width: 100%;
+    background-color: aquamarine;
+}
+
 #player-info {
     grid-area: player-info;
     height: 100%;
@@ -92,6 +99,9 @@ main{
     justify-content: center;
     color: var(--main-color);
     background-color: var(--main-bg);
+    font-size: 5em;
+    padding: 0;
+    margin: 0;
 }
 
 .cell:hover{

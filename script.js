@@ -16,7 +16,7 @@ const Gameboard = (() => {
 
     const clearGameboard = () => {
         for (let row = 0; row < gridSize; row++)
-            for (let column = 0; column < columnNumber; column++)
+            for (let column = 0; column < gridSize; column++)
             gameboard[row][column] = "";
     }
 
@@ -146,7 +146,37 @@ const handleGame = (() => {
     return {isOver, isWinner, isDraw, isDiagonalWin, isHorizontalWin, isVerticalWin, getWinnerSymbol};
 })();
 
-const domHandler = ((doc) => {
+const MessageController = ((doc) => {
+    const message = doc.querySelector("#message");
+
+    const winnerMessage = () => {
+        message.innerText = `${handleGame.getWinnerSymbol()} wins!`;
+    };
+
+    
+    const render = () => {
+        if (handleGame.isWinner()) winnerMessage();
+    };
+    
+    return {render};
+})(document);
+
+const InfoController = ((doc) => {
+    const info = doc.querySelector("#player-info");
+
+    const add = () => {
+        message.innerText = `${handleGame.getWinnerSymbol} wins!`;
+    };
+
+    
+    const render = () => {
+        if (handleGame.isWinner()) winnerMessage();
+    };
+    
+    return {render};
+})(document);
+
+const BoardController = ((doc) => {
     const htmlBoard = doc.querySelector("#board");
 
     // EventHandlers
@@ -193,9 +223,10 @@ const domHandler = ((doc) => {
 
     // render
 
-    const render = (currentTurn) => {
+    const render = () => {
         clearGameboardHtml();
-        displayGameboardHtml(currentTurn);
+        displayGameboardHtml();
+        MessageController.render();
     }
 
     const clearGameboardHtml = () => {
@@ -209,6 +240,21 @@ const domHandler = ((doc) => {
     }
 
     render();
+
+    return {render}
+
+})(document);
+
+const ButtonController = ((doc) => {
+    const btns = doc.querySelector("#buttons");
+    const resetBtn = doc.querySelector("#reset-btn");
+
+    const resetGame = (e) => {
+        Gameboard.reset();
+        BoardController.render();
+    }
+
+    resetBtn.addEventListener("click", resetGame);
 
 })(document);
 
