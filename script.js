@@ -88,24 +88,40 @@ const TurnHandler = (() => {
         return temp;
     }
 
-    const getCurrentTurn = () => {
-        return turn;
-    }
+    const getCurrentTurnSymbol = () => turn;
 
-    const getSymbol1 = () => {
-        return symbol1;
-    }
+    const getSymbol1 = () => symbol1;
 
-    const getSymbol2 = () => {
-        return symbol2;
-    }
+    const getSymbol2 = () => symbol2;
 
     const changeFirstTurn = () => {
         if (Gameboard.isEmpty()) turn = turn === symbol1 ? symbol2 : symbol1;
     }
 
-    return {playTurn, getCurrentTurn, getSymbol1, getSymbol2, changeFirstTurn};
+    const getPlayerNameFromSymbol = (symbol) => {
+        return symbol === player1.getSymbol() ? player1.getName() : player2.getName();
+    }
+
+    const getCurrentTurn = () => getPlayerNameFromSymbol(turn)
+
+
+    return {playTurn, getCurrentTurnSymbol, getSymbol1, getSymbol2, changeFirstTurn, getCurrentTurn, getPlayerNameFromSymbol};
 })();
+
+const Player = (name, symbol) => {
+    const setName = (newName) => name = newName;
+    let wins = 0;
+
+    const getName = () => name;
+    const getSymbol = () => symbol;
+    const getWins = () => wins;
+    const addWin = () => wins++;
+
+    return {setName, getName, getSymbol, getWins, addWin};
+};
+
+const player1 = Player("Player 1", TurnHandler.getSymbol1());
+const player2 = Player("Player 2", TurnHandler.getSymbol2());
 
 const handleGame = (() => {
     const isVerticalWin = () => {
@@ -140,39 +156,71 @@ const handleGame = (() => {
 
     const getWinnerSymbol = () => {
         if (isWinner())
-            return TurnHandler.getCurrentTurn() === TurnHandler.getSymbol1() ? TurnHandler.getSymbol2() : TurnHandler.getSymbol1();
+            return TurnHandler.getCurrentTurnSymbol() === TurnHandler.getSymbol1() ? TurnHandler.getSymbol2() : TurnHandler.getSymbol1();
     }
 
-    return {isOver, isWinner, isDraw, isDiagonalWin, isHorizontalWin, isVerticalWin, getWinnerSymbol};
+    const getWinner = () => TurnHandler.getPlayerNameFromSymbol(getWinnerSymbol());
+
+    return {isOver, isWinner, isDraw, isDiagonalWin, isHorizontalWin, isVerticalWin, getWinner};
 })();
 
 
-const Player = (name, symbol) => {
-    const setName = (newName) => name = newName;
-    let wins = 0;
+const ScoreTracker = (() => {
+    let draws = 0;
+    let gamesPlayed = 0;
 
-    const getName = () => name;
-    const getSymbol = () => symbol;
-    const getWins = () => wins;
-    const addWin = () => wins++;
+    const addWin = (player) => {
+        if (player === player1.getName()) player1.addWin();
+        else player2.addWin();
+    }
 
-    return {setName, getName, getSymbol, getWins, addWin};
-};
+    const addDraw = () => {
+        draws++;
+    }
 
-const player1 = Player("Player 1", TurnHandler.getSymbol1());
-const player2 = Player("Player 2", TurnHandler.getSymbol2());
+    const addResult = () => {
+        if (handleGame.isOver()){
+            if (handleGame.isWinner()){
+                addWin(handleGame.getWinner());
+            }
+            else addDraw();
+            gamesPlayed++;
+        }
+    }
+
+    const getPlayer1Wins = () => player1.getWins()
+
+    const getPlayer2Wins = () => player2.getWins()
+
+    const getDraws = () => draws;
+
+    const getGamesPlayed = () => gamesPlayed;
+
+    return {addResult, getPlayer1Wins, getPlayer2Wins, getDraws, getGamesPlayed}
+
+})();
 
 const MessageController = ((doc) => {
     const message = doc.querySelector("#message");
 
     const winnerMessage = () => {
-        const winnerSymbol = handleGame.getWinnerSymbol();
-        const winningPlayer = winnerSymbol === player1.getSymbol() ? player1.getName() : player2.getName();
+        const winningPlayer = handleGame.getWinner();
         message.innerText = `${winningPlayer} wins!`;
     };
     
+    const drawMessage = () => {
+        message.innerText = `Draw!`;
+    };
+
+    const turnMessage = () => {
+        playerTurn = TurnHandler.getCurrentTurn();
+        message.innerText = `${playerTurn}'s turn!`;
+    };
+
     const render = () => {
         if (handleGame.isWinner()) winnerMessage();
+        else if (handleGame.isDraw()) drawMessage();
+        else turnMessage();
     };
     
     return {render};
@@ -233,7 +281,7 @@ const BoardController = ((doc) => {
 
     const hoverCell = (e) => {
         const cell = e.target;
-        const currentTurn = TurnHandler.getCurrentTurn();
+        const currentTurn = TurnHandler.getCurrentTurnSymbol();
 
         if (cell.innerText === "" ){
             cell.innerText = currentTurn;
