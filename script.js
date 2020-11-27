@@ -210,35 +210,40 @@ const ScoreTracker = (() => {
 })();
 
 const MessageController = ((doc) => {
-    // winner message
-    // turn message
-    const message = doc.querySelector("#message");
 
-    const winnerMessage = () => {
-        const oldMessage = message.innerText;
+    const message = doc.querySelector("#message");
+    const turnMessage = message.querySelector("#turn-message")
+    const finalMessage = message.querySelector("#final-message")
+
+    const winnerMessageDisplay = () => {
+        const oldMessage = finalMessage.innerText;
         alreadyWin = false;
         if (oldMessage.substring(oldMessage.indexOf("!") - 4, oldMessage.indexOf("!")) === "wins")
             alreadyWin = true;
         if (!alreadyWin){
             const winningPlayer = handleGame.getWinner();
             ScoreTracker.addWin(winningPlayer);
-            message.innerText = `${winningPlayer} wins!`;
+            finalMessage.innerText = `${winningPlayer} wins!`;
         }
     };
     
-    const drawMessage = () => {
-        message.innerText = `Draw!`;
+    const drawMessageDisplay = () => finalMessage.innerText = `Draw!`;
+    const noFinalMessageDisplay = () => finalMessage.innerText = ``;
+
+    const turnMessageDisplay = () => {
+        playerTurn = TurnHandler.getCurrentTurn();
+        turnMessage.innerText = `${playerTurn}'s turn next!`;
     };
 
-    const turnMessage = () => {
-        playerTurn = TurnHandler.getCurrentTurn();
-        message.innerText = `${playerTurn}'s turn!`;
-    };
+    const finalMessageDisplay = () => {
+        if (handleGame.isWinner()) winnerMessageDisplay();
+        else if (handleGame.isDraw()) drawMessageDisplay();
+        else noFinalMessageDisplay();
+    }
 
     const render = () => {
-        if (handleGame.isWinner()) winnerMessage();
-        else if (handleGame.isDraw()) drawMessage();
-        else turnMessage();
+        finalMessageDisplay()
+        turnMessageDisplay();
     };
     
     return {render};

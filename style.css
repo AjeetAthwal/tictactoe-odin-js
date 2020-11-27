@@ -96,6 +96,16 @@ main{
     align-items: center;
     justify-content: center;
     font-size: 2em;
+    flex-direction: column;
+}
+
+#message>div {
+    height: 50%;
+    width: 100%;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #btns {
