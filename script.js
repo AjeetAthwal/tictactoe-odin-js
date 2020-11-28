@@ -83,7 +83,9 @@ const Gameboard = (() => {
         return arr;
     }
 
-    return {reset, isEmpty, isFull, playTurn, getGridSize, getCellInput, getColumn, getRow, getDiagonalTLBR, getDiagonalBLTR, getBoard, getNumberOfEmptyCells, getEmptyCells};
+    const isEmptyCell = (row, col) => gameboard[row][col] === "" ? true : false;
+
+    return {reset, isEmpty, isFull, playTurn, getGridSize, getCellInput, getColumn, getRow, getDiagonalTLBR, getDiagonalBLTR, getBoard, getNumberOfEmptyCells, getEmptyCells, isEmptyCell};
 
 })();
 
@@ -503,6 +505,8 @@ const BoardController = ((doc) => {
         cell.classList.add("cell");
         cell.innerText = entry;
         if (handleGame.isWinningEntry(row, column)) cell.classList.add("winner");
+        if (Gameboard.isEmptyCell(row, column)) cell.classList.add("empty-cell");
+        if (handleGame.isOver()) cell.classList.remove("empty-cell");
         if (entry === "" && !handleGame.isOver()) {
             cell.addEventListener("click", playTurn);
             cell.addEventListener("mouseover", hoverCell);

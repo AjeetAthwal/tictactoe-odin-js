@@ -35,6 +35,7 @@ body{
     font-size: 1.5em;
     background-color: var(--main-bg);
     counter-reset: var(--main-color);
+    color: var(--main-color);
 }
 
 h1{
@@ -56,7 +57,7 @@ main{
 #btn-switches{
     height: var(--btn-switch-height);
     width: 100%;
-    background-color: black;
+    background-color: var(--main-bg);
 }
 
 #ttt-game{
@@ -143,9 +144,10 @@ main{
     font-size: 5em;
     padding: 0;
     margin: 0;
+    user-select: none;
 }
 
-.cell:hover{
+.empty-cell:hover{
     cursor: pointer;
 }
 .temp-input {
