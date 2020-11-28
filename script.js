@@ -90,11 +90,33 @@ const Gameboard = (() => {
 })();
 
 
+const Player = (name, symbol) => {
+    const id = name.replace(/\s/g, '').toLowerCase();
+    const setName = (newName) => name = newName;
+    const setSymbol = (newSymbol) => symbol = newSymbol;
+    let wins = 0;
+
+    const getName = () => name;
+    const getSymbol = () => symbol;
+    const getWins = () => wins;
+    const addWin = () => wins++;
+    const getID = () => id;
+    const getquerySelector = () => `#${id}-info`
+
+    const resetWins = () => wins = 0;
+
+    return {setName, getName, getSymbol, getWins, addWin, getID, getquerySelector, resetWins, setSymbol};
+};
+
+const player1 = Player("Player 1", "X");
+const player2 = Player("Player 2", "O");
+
+const players = [player1, player2];
 
 const TurnHandler = (() => {
     // cache
-    const symbol1 = "X";
-    const symbol2 = "O";
+    let symbol1 = player1.getSymbol();
+    let symbol2 = player2.getSymbol();
 
     let turn = symbol1;
 
@@ -117,31 +139,19 @@ const TurnHandler = (() => {
 
     const getCurrentTurn = () => getPlayerNameFromSymbol(turn)
 
+    const changeSymbol1 = (newSymbol) => {
+        symbol1 = newSymbol;
+        player1.setSymbol(newSymbol);
+    }
 
-    return {playTurn, getCurrentTurnSymbol, getSymbol1, getSymbol2, changeTurn, getCurrentTurn, getPlayerNameFromSymbol};
+    const changeSymbol2 = (newSymbol) => {
+        symbol2 = newSymbol;
+        player2.setSymbol(newSymbol);
+    }
+
+    return {playTurn, getCurrentTurnSymbol, getSymbol1, getSymbol2, changeTurn, getCurrentTurn, getPlayerNameFromSymbol, changeSymbol1, changeSymbol2};
 })();
 
-const Player = (name, symbol) => {
-    const id = name.replace(/\s/g, '').toLowerCase();
-    const setName = (newName) => name = newName;
-    let wins = 0;
-
-    const getName = () => name;
-    const getSymbol = () => symbol;
-    const getWins = () => wins;
-    const addWin = () => wins++;
-    const getID = () => id;
-    const getquerySelector = () => `#${id}-info`
-
-    const resetWins = () => wins = 0;
-
-    return {setName, getName, getSymbol, getWins, addWin, getID, getquerySelector, resetWins};
-};
-
-const player1 = Player("Player 1", TurnHandler.getSymbol1());
-const player2 = Player("Player 2", TurnHandler.getSymbol2());
-
-const players = [player1, player2];
 
 const handleGame = (() => {
     const isVerticalWin = () => {
@@ -266,8 +276,9 @@ const TurnMessageController = ((doc) => {
     const turnMessage = doc.querySelector("#turn-message")
     
     const render = () => {
+        const playerTurnSymbol = TurnHandler.getCurrentTurnSymbol();
         const playerTurn = TurnHandler.getCurrentTurn();
-        turnMessage.innerText = `${playerTurn}'s turn next!`;
+        turnMessage.innerText = `${playerTurn}'s (${playerTurnSymbol}) turn next!`;
     };
     
     return {render};
