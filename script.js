@@ -67,7 +67,23 @@ const Gameboard = (() => {
 
     const getBoard = () => gameboard;
 
-    return {reset, isEmpty, isFull, playTurn, getGridSize, getCellInput, getColumn, getRow, getDiagonalTLBR, getDiagonalBLTR, getBoard};
+    const getNumberOfEmptyCells = () => {
+        count = 0;
+        for (let row = 0; row < gridSize; row++)
+            for (let column = 0; column < gridSize; column++)
+                if (gameboard[row][column] === "") count++;
+        return count;
+    }
+
+    const getEmptyCells = () => {
+        const arr = []
+        for (let row = 0; row < gridSize; row++)
+            for (let column = 0; column < gridSize; column++)
+                if (gameboard[row][column] === "") arr.push([row, column]);
+        return arr;
+    }
+
+    return {reset, isEmpty, isFull, playTurn, getGridSize, getCellInput, getColumn, getRow, getDiagonalTLBR, getDiagonalBLTR, getBoard, getNumberOfEmptyCells, getEmptyCells};
 
 })();
 
