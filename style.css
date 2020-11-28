@@ -231,3 +231,8 @@ button, input[type=submit]{
 .winner{
     color: var(--yes-color);
 }
+
+.edit-icon{
+    height: 15px;
+    cursor: pointer;
+}

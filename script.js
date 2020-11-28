@@ -316,7 +316,9 @@ const PlayerInfoNameControlloer = ((doc) => {
     }
 
     const editNameForm = (e) => {
-        const nameDiv = e.target;
+        const editIcon = e.target;
+        editIcon.removeEventListener("click", editNameForm);
+        const nameDiv = editIcon.parentElement.parentElement.getElementsByClassName("name")[0];
         nameDiv.innerText = "";
         const playerNameForm = doc.createElement("form");
         playerNameForm.addEventListener("submit", changePlayerName)
@@ -332,10 +334,22 @@ const PlayerInfoNameControlloer = ((doc) => {
 
         const nameDiv = playerInfoDiv.getElementsByClassName("name")[0];
         nameDiv.innerText = player.getName()
-        nameDiv.addEventListener("click", editNameForm);
 
-        nameDiv.addEventListener("click", editNameForm);
-        
+        const editDiv = playerInfoDiv.getElementsByClassName("name-edit")[0];
+
+        let editIcon = editDiv.getElementsByClassName("edit-icon")[0]
+        if (editIcon === undefined){
+        editIcon = document.createElement("img");
+        editIcon.src = "images/edit_icon.png";
+        editIcon.alt = "Edit";
+        editIcon.classList = "edit-icon";
+        } else {
+            editIcon = editDiv.getElementsByClassName("edit-icon")[0];
+        }
+
+        editIcon.addEventListener("click", editNameForm);
+
+        editDiv.appendChild(editIcon);
     };
 
     const render = () => {
@@ -381,7 +395,9 @@ const PlayerInfoSymbolController = ((doc) => {
     }
 
     const editSymbolForm = (e) => {
-        const symbolDiv = e.target;
+        const editIcon = e.target;
+        editIcon.removeEventListener("click", editSymbolForm);
+        const symbolDiv = editIcon.parentElement.parentElement.getElementsByClassName("symbol")[0];
         symbolDiv.innerText = "";
         const symbolForm = doc.createElement("form");
         symbolForm.addEventListener("submit", changeSymbol)
@@ -397,10 +413,23 @@ const PlayerInfoSymbolController = ((doc) => {
         const playerInfoDiv = playerInfoDivs[player.getID()];
 
         const symbolDiv = playerInfoDiv.getElementsByClassName("symbol")[0];
-        symbolDiv.innerText = player.getSymbol();
+        symbolDiv.innerText = player.getSymbol()
 
-        symbolDiv.addEventListener("click", editSymbolForm);
-        
+        const editDiv = playerInfoDiv.getElementsByClassName("symbol-edit")[0];
+
+        let editIcon = editDiv.getElementsByClassName("edit-icon")[0]
+        if (editIcon === undefined){
+        editIcon = document.createElement("img");
+        editIcon.src = "images/edit_icon.png";
+        editIcon.alt = "Edit";
+        editIcon.classList = "edit-icon";
+        } else {
+            editIcon = editDiv.getElementsByClassName("edit-icon")[0];
+        }
+
+        editIcon.addEventListener("click", editSymbolForm);
+
+        editDiv.appendChild(editIcon);
     };
 
     const render = () => {
