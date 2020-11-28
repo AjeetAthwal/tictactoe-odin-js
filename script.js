@@ -318,7 +318,7 @@ const PlayerInfoController = ((doc) => {
 
     const changeSymbol = (e) => {
         e.preventDefault();
-        const newSymbol = e.target.querySelector("input").value;
+        const newSymbol = e.target.querySelector("input").value.substring(0, 1);
         const playerIDElement = e.target.parentElement.parentElement.id
         const playerID = playerIDElement.substring(0, playerIDElement.indexOf("-"));
         
