@@ -297,8 +297,7 @@ const MessageController = (() => {
     return {render};
 })();
 
-const PlayerInfoController = ((doc) => {
-
+const PlayerInfoNameControlloer = ((doc) => {
     const playerInfoDivs = {
         player1 : doc.querySelector(player1.getquerySelector()),
         player2 : doc.querySelector(player2.getquerySelector())
@@ -315,6 +314,49 @@ const PlayerInfoController = ((doc) => {
         
         reRender();
     }
+
+    const editNameForm = (e) => {
+        const nameDiv = e.target;
+        nameDiv.innerText = "";
+        const playerNameForm = doc.createElement("form");
+        playerNameForm.addEventListener("submit", changePlayerName)
+
+        const formInput = doc.createElement("input");
+
+        playerNameForm.appendChild(formInput);
+        nameDiv.appendChild(playerNameForm);
+    }
+
+    const addPlayer = (player) => {
+        const playerInfoDiv = playerInfoDivs[player.getID()];
+
+        const nameDiv = playerInfoDiv.getElementsByClassName("name")[0];
+        nameDiv.innerText = player.getName()
+        nameDiv.addEventListener("click", editNameForm);
+
+        nameDiv.addEventListener("click", editNameForm);
+        
+    };
+
+    const render = () => {
+        addPlayer(player1);
+        addPlayer(player2);
+    };
+
+    const reRender = () => {
+        render();
+        MessageController.render();
+    }
+    
+    return {render};
+})(document)
+
+const PlayerInfoSymbolController = ((doc) => {
+
+    const playerInfoDivs = {
+        player1 : doc.querySelector(player1.getquerySelector()),
+        player2 : doc.querySelector(player2.getquerySelector())
+    };
 
     const changeSymbol = (e) => {
         e.preventDefault();
@@ -338,18 +380,6 @@ const PlayerInfoController = ((doc) => {
         reRender();
     }
 
-    const editNameForm = (e) => {
-        const nameDiv = e.target;
-        nameDiv.innerText = "";
-        const playerNameForm = doc.createElement("form");
-        playerNameForm.addEventListener("submit", changePlayerName)
-
-        const formInput = doc.createElement("input");
-
-        playerNameForm.appendChild(formInput);
-        nameDiv.appendChild(playerNameForm);
-    }
-
     const editSymbolForm = (e) => {
         const symbolDiv = e.target;
         symbolDiv.innerText = "";
@@ -366,27 +396,16 @@ const PlayerInfoController = ((doc) => {
     const addPlayer = (player) => {
         const playerInfoDiv = playerInfoDivs[player.getID()];
 
-        const nameDiv = playerInfoDiv.getElementsByClassName("name")[0];
-        console.log(nameDiv)
-        nameDiv.innerText = player.getName()
-        nameDiv.addEventListener("click", editNameForm);
-
         const symbolDiv = playerInfoDiv.getElementsByClassName("symbol")[0];
         symbolDiv.innerText = player.getSymbol();
 
-        nameDiv.addEventListener("click", editNameForm);
         symbolDiv.addEventListener("click", editSymbolForm);
         
     };
-    
-    const addDraws = () => {
-        // add draws
-    }
 
     const render = () => {
         addPlayer(player1);
         addPlayer(player2);
-        addDraws();
     };
 
     const reRender = () => {
@@ -399,6 +418,16 @@ const PlayerInfoController = ((doc) => {
     return {render};
 })(document);
 
+const PlayerInfoController = (() => {
+
+    const render = () => {
+        PlayerInfoNameControlloer.render();
+        PlayerInfoSymbolController.render();
+    };
+    
+    return {render};
+})(document);
+
 const InfoController = (() => {
     const render = () => {
         PlayerInfoController.render();
@@ -406,7 +435,6 @@ const InfoController = (() => {
     
     return {render};
 })();
-
 
 const ChangePlayerButtonController = ((doc) => {
     const btnDiv = doc.querySelector("#change-player-btn");
