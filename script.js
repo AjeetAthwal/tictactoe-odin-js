@@ -360,6 +360,7 @@ const PlayerInfoNameControlloer = ((doc) => {
     const reRender = () => {
         render();
         MessageController.render();
+        ScoreInfoController.render();
     }
     
     return {render};
@@ -442,13 +443,13 @@ const PlayerInfoSymbolController = ((doc) => {
         render();
         MessageController.render();
         BoardController.render();
+        ScoreInfoController.render();
     }
     
     return {render};
 })(document);
 
 const PlayerInfoController = (() => {
-
     const render = () => {
         PlayerInfoNameControlloer.render();
         PlayerInfoSymbolController.render();
@@ -457,9 +458,42 @@ const PlayerInfoController = (() => {
     return {render};
 })(document);
 
+const ScoreInfoController = ((doc) => {
+    const playerScoreDivs = {
+        player1 : doc.querySelector(`#${player1.getID()}-score-info`),
+        player2 : doc.querySelector(`#${player2.getID()}-score-info`)
+    };
+
+    const drawDiv = doc.querySelector("#draws");
+
+    const addPlayer = (player) => {
+        const playerScoreDiv = playerScoreDivs[player.getID()];
+
+        const nameDiv = playerScoreDiv.getElementsByClassName("name")[0];
+        nameDiv.innerText = player.getName()
+
+        const scoreDiv = playerScoreDiv.getElementsByClassName("score")[0];
+        scoreDiv.innerText = player.getWins();
+    };
+
+    const addDraw = () => {
+        const scoreDiv = drawDiv.getElementsByClassName("score")[0];
+        scoreDiv.innerText = ScoreTracker.getDraws();
+    };
+
+    const render = () => {
+        addPlayer(player1);
+        addPlayer(player2);
+        addDraw();
+    };
+
+    return {render}
+})(document);
+
 const InfoController = (() => {
     const render = () => {
         PlayerInfoController.render();
+        ScoreInfoController.render();
     };
     
     return {render};
