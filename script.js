@@ -14,13 +14,11 @@ const Gameboard = (() => {
         return gameboard[row][column];
     }
 
-    const clearGameboard = () => {
+    const reset = () => {
         for (let row = 0; row < gridSize; row++)
             for (let column = 0; column < gridSize; column++)
             gameboard[row][column] = "";
     }
-
-    const reset = () => clearGameboard();
 
     const isEmpty = () => {
         for (let row = 0; row < gridSize; row++)
@@ -35,7 +33,6 @@ const Gameboard = (() => {
                 if (gameboard[row][column] === "") return false;
         return true;
     }
-
 
     const getGridSize = () => gridSize;
 
@@ -111,8 +108,6 @@ const Player = (name, symbol) => {
 const player1 = Player("Player 1", "X");
 const player2 = Player("Player 2", "O");
 
-const players = [player1, player2];
-
 const TurnHandler = (() => {
     // cache
     let symbol1 = player1.getSymbol();
@@ -123,15 +118,15 @@ const TurnHandler = (() => {
     // functions
 
     const playTurn = () => {
-        const temp = turn;
+        const prevTurn = turn;
         turn = turn === symbol1 ? symbol2 : symbol1;
-        return temp;
+        return prevTurn;
     }
 
     const getCurrentTurnSymbol = () => turn;
     const getSymbol1 = () => symbol1;
     const getSymbol2 = () => symbol2;
-    const changeTurn = () => turn = turn === symbol1 ? symbol2 : symbol1
+    const changeTurn = () => turn = turn === symbol1 ? symbol2 : symbol1;
 
     const getPlayerNameFromSymbol = (symbol) => {
         return symbol === player1.getSymbol() ? player1.getName() : player2.getName();
@@ -140,13 +135,17 @@ const TurnHandler = (() => {
     const getCurrentTurn = () => getPlayerNameFromSymbol(turn)
 
     const changeSymbol1 = (newSymbol) => {
-        symbol1 = newSymbol;
-        player1.setSymbol(newSymbol);
+        if (newSymbol !== symbol2){
+            symbol1 = newSymbol;
+            player1.setSymbol(newSymbol);
+        }
     }
 
     const changeSymbol2 = (newSymbol) => {
-        symbol2 = newSymbol;
-        player2.setSymbol(newSymbol);
+        if (newSymbol !== symbol1){
+            symbol2 = newSymbol;
+            player2.setSymbol(newSymbol);
+        }
     }
 
     return {playTurn, getCurrentTurnSymbol, getSymbol1, getSymbol2, changeTurn, getCurrentTurn, getPlayerNameFromSymbol, changeSymbol1, changeSymbol2};
@@ -201,13 +200,13 @@ const handleGame = (() => {
         if ((row === 0 && col === 0) || (row === 2 && col === 2)){ 
             if(Gameboard.getDiagonalTLBR().every((value, index, arr) => value === arr[0] && value !== "")) return true;
         }
-        if ((row === 0 && col === 2) || (row === 0 && col === 2)){
+        if ((row === 0 && col === 2) || (row === 2 && col === 0)){
             if(Gameboard.getDiagonalBLTR().every((value, index, arr) => value === arr[0] && value !== "")) return true;
         }
         return false;
     }
 
-    return {isOver, isWinner, isDraw, isDiagonalWin, isHorizontalWin, isVerticalWin, getWinner, isWinningEntry};
+    return {isOver, isWinner, isDraw, isDiagonalWin, isHorizontalWin, isVerticalWin, getWinner, isWinningEntry, getWinnerSymbol};
 })();
 
 
@@ -257,7 +256,8 @@ const FinalMessageController = ((doc) => {
 
     const winnerMessageDisplay = () => {
         const winningPlayer = handleGame.getWinner();
-        finalMessage.innerText = `${winningPlayer} wins!`;
+        const winningPlayerSymbol = handleGame.getWinnerSymbol()
+        finalMessage.innerText = `${winningPlayer} (${winningPlayerSymbol}) wins!`;
     };
     
     const drawMessageDisplay = () => finalMessage.innerText = `Draw!`;
