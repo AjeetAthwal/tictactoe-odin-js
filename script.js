@@ -324,6 +324,7 @@ const PlayerInfoNameControlloer = ((doc) => {
         playerNameForm.addEventListener("submit", changePlayerName)
 
         const formInput = doc.createElement("input");
+        formInput.maxLength = 10
 
         playerNameForm.appendChild(formInput);
         nameDiv.appendChild(playerNameForm);
@@ -404,6 +405,7 @@ const PlayerInfoSymbolController = ((doc) => {
         symbolForm.addEventListener("submit", changeSymbol)
 
         const formInput = doc.createElement("input");
+        formInput.maxLength = 1
 
         symbolForm.appendChild(formInput);
         symbolDiv.appendChild(symbolForm);

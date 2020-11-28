@@ -97,7 +97,7 @@ main{
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2em;
+    font-size: 1.75em;
     flex-direction: column;
 }
 
@@ -235,4 +235,16 @@ button, input[type=submit]{
 .edit-icon{
     height: 15px;
     cursor: pointer;
+}
+
+form>input {    
+    height: 100%;
+}
+
+.name>form>input {
+    width: 80%;
+}
+
+.symbol>form>input {
+    width: 10%;
 }
