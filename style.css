@@ -179,3 +179,7 @@ button, input[type=submit]{
 .no-btn{
     background-color: var(--no-color);
 }
+
+.winner{
+    color: var(--yes-color);
+}

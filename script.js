@@ -163,7 +163,23 @@ const handleGame = (() => {
 
     const getWinner = () => TurnHandler.getPlayerNameFromSymbol(getWinnerSymbol());
 
-    return {isOver, isWinner, isDraw, isDiagonalWin, isHorizontalWin, isVerticalWin, getWinner};
+    const isWinningEntry = (row, col) => {
+        if (!isWinner()) return false;
+        if(Gameboard.getColumn(col).every((value, index, arr) => value === arr[0] &&  value !== "")) return true;
+        if(Gameboard.getRow(row).every((value, index, arr) => value === arr[0] && value !== "")) return true;
+        if (row === 1 && col === 1) {
+            if (isDiagonalWin()) return true;
+        }
+        if ((row === 0 && col === 0) || (row === 2 && col === 2)){ 
+            if(Gameboard.getDiagonalTLBR().every((value, index, arr) => value === arr[0] && value !== "")) return true;
+        }
+        if ((row === 0 && col === 2) || (row === 0 && col === 2)){
+            if(Gameboard.getDiagonalBLTR().every((value, index, arr) => value === arr[0] && value !== "")) return true;
+        }
+        return false;
+    }
+
+    return {isOver, isWinner, isDraw, isDiagonalWin, isHorizontalWin, isVerticalWin, getWinner, isWinningEntry};
 })();
 
 
@@ -468,8 +484,9 @@ const BoardController = ((doc) => {
 
         cell.dataset.row = row;
         cell.dataset.column = column;
-        cell.classList = "cell";
+        cell.classList.add("cell");
         cell.innerText = entry;
+        if (handleGame.isWinningEntry(row, column)) cell.classList.add("winner");
         if (entry === "" && !handleGame.isOver()) {
             cell.addEventListener("click", playTurn);
             cell.addEventListener("mouseover", hoverCell);
