@@ -164,6 +164,7 @@ button, input[type=submit]{
     height: 50px;
     width: 150px;
     font-size: 0.5em;
+    user-select: none;
 }
 .off-table{
     background-color: var(--main-bg);
