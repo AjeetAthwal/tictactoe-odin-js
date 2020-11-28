@@ -304,30 +304,37 @@ const PlayerInfoNameControlloer = ((doc) => {
     };
 
     const changePlayerName = (e) => {
-        e.preventDefault();
-        const newName = e.target.querySelector("input").value;
-        const playerIDElement = e.target.parentElement.parentElement.id
-        const playerID = playerIDElement.substring(0, playerIDElement.indexOf("-"));
-        
-        if (playerID === player1.getID()) player1.setName(newName);
-        else player2.setName(newName);
-        
+        if (e.type !== "click") {
+            e.preventDefault();
+            const newName = e.target.querySelector("input").value;
+            if (newName !== ""){
+                const playerIDElement = e.target.parentElement.parentElement.id
+                const playerID = playerIDElement.substring(0, playerIDElement.indexOf("-"));
+                
+                if (playerID === player1.getID()) player1.setName(newName);
+                else player2.setName(newName);
+            }
+        }
         reRender();
     }
 
     const editNameForm = (e) => {
         const editIcon = e.target;
         editIcon.removeEventListener("click", editNameForm);
+        editIcon.addEventListener("click", changePlayerName);
         const nameDiv = editIcon.parentElement.parentElement.getElementsByClassName("name")[0];
+        const currentName = nameDiv.innerText;
         nameDiv.innerText = "";
         const playerNameForm = doc.createElement("form");
         playerNameForm.addEventListener("submit", changePlayerName)
 
         const formInput = doc.createElement("input");
         formInput.maxLength = 10
-
+        formInput.placeholder = currentName
         playerNameForm.appendChild(formInput);
         nameDiv.appendChild(playerNameForm);
+
+        nameDiv.querySelector("input").focus();
     }
 
     const addPlayer = (player) => {
@@ -375,40 +382,49 @@ const PlayerInfoSymbolController = ((doc) => {
     };
 
     const changeSymbol = (e) => {
-        e.preventDefault();
-        const newSymbol = e.target.querySelector("input").value.substring(0, 1);
-        const playerIDElement = e.target.parentElement.parentElement.id
-        const playerID = playerIDElement.substring(0, playerIDElement.indexOf("-"));
-        
-        let oldSymbol = "";
-        if (playerID === player1.getID()) {
-            if (player2.getSymbol().toLowerCase() !== newSymbol.toLowerCase()) {
-                oldSymbol = player1.getSymbol();
-                player1.setSymbol(newSymbol);
+        if (e.type !== "click") {
+            e.preventDefault();
+            const newSymbol = e.target.querySelector("input").value.substring(0, 1);
+            if (newSymbol !== ""){
+                const playerIDElement = e.target.parentElement.parentElement.id
+                const playerID = playerIDElement.substring(0, playerIDElement.indexOf("-"));
+                
+                let oldSymbol = "";
+                if (playerID === player1.getID()) {
+                    if (player2.getSymbol().toLowerCase() !== newSymbol.toLowerCase()) {
+                        oldSymbol = player1.getSymbol();
+                        player1.setSymbol(newSymbol);
+                    }
+                }
+                else if (player1.getSymbol().toLowerCase() !== newSymbol.toLowerCase()) {
+                    oldSymbol = player2.getSymbol();
+                    player2.setSymbol(newSymbol);
+                }
+                
+                if (oldSymbol !== "") Gameboard.refreshBoardSymbols(oldSymbol, newSymbol);
             }
         }
-        else if (player1.getSymbol().toLowerCase() !== newSymbol.toLowerCase()) {
-            oldSymbol = player2.getSymbol();
-            player2.setSymbol(newSymbol);
-        }
-        
-        if (oldSymbol !== "") Gameboard.refreshBoardSymbols(oldSymbol, newSymbol);
         reRender();
     }
 
     const editSymbolForm = (e) => {
         const editIcon = e.target;
         editIcon.removeEventListener("click", editSymbolForm);
+        editIcon.addEventListener("click", changeSymbol);
         const symbolDiv = editIcon.parentElement.parentElement.getElementsByClassName("symbol")[0];
+        const currentSymbol = symbolDiv.innerText;
         symbolDiv.innerText = "";
         const symbolForm = doc.createElement("form");
         symbolForm.addEventListener("submit", changeSymbol)
 
         const formInput = doc.createElement("input");
-        formInput.maxLength = 1
+        formInput.maxLength = 1;
+        formInput.placeholder = currentSymbol;
 
         symbolForm.appendChild(formInput);
         symbolDiv.appendChild(symbolForm);
+
+        symbolDiv.querySelector("input").focus();
     }
 
 

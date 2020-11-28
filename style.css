@@ -246,10 +246,18 @@ form>input {
 }
 
 .symbol>form>input {
-    width: 10%;
+    width: 100%;
+}
+
+.heading{
+    padding-bottom: 10px;
 }
 
 .heading>h1{
     color: var(--main-color);
     font-size: 1em;
+}
+
+.symbol {
+    width: 12px;
 }
