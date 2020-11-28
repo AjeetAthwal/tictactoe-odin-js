@@ -155,7 +155,7 @@ main{
 }
 
 .score-info-subdiv{
-    height: 33%;
+    height: 25%;
     width: 100%;
     margin: auto;
     display: flex;
@@ -165,7 +165,7 @@ main{
 }
 
 .player-info-subdiv{
-    height: 50%;
+    height: 33%;
     width: 100%;
     margin: auto;
     display: flex;
@@ -247,4 +247,9 @@ form>input {
 
 .symbol>form>input {
     width: 10%;
+}
+
+.heading>h1{
+    color: var(--main-color);
+    font-size: 1em;
 }
