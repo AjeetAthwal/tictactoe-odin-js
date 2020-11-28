@@ -3,7 +3,7 @@
     --secondary-bg: #b18d8d;
     --tertiary-bg: #796969;
     --main-color: #700000;
-    --grid-size: 800px;
+    --grid-size: 600px;
     --btn-switch-height: 25px;
     --padding-size: 75px;
     --yes-color:rgb(44, 119, 37);
@@ -32,7 +32,7 @@ footer{
 
 body{
     font-family: 'Nunito', sans-serif;
-    font-size: 1.5em;
+    font-size: 1.3em;
     background-color: var(--main-bg);
     counter-reset: var(--main-color);
     color: var(--main-color);
@@ -242,7 +242,7 @@ form>input {
 }
 
 .name>form>input {
-    width: 80%;
+    width: 50%;
 }
 
 .symbol>form>input {
