@@ -131,6 +131,51 @@ main{
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
+}
+
+#player-info {
+    height: 25%;
+    width: 100%;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+#score-info {
+    height: 25%;
+    width: 100%;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.score-info-subdiv{
+    height: 33%;
+    width: 100%;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+}
+
+.player-info-subdiv{
+    height: 50%;
+    width: 100%;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+}
+
+.name{
+    width: 50%;
 }
 
 .cell {

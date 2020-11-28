@@ -82,7 +82,13 @@ const Gameboard = (() => {
 
     const isEmptyCell = (row, col) => gameboard[row][col] === "" ? true : false;
 
-    return {reset, isEmpty, isFull, playTurn, getGridSize, getCellInput, getColumn, getRow, getDiagonalTLBR, getDiagonalBLTR, getBoard, getNumberOfEmptyCells, getEmptyCells, isEmptyCell};
+    const refreshBoardSymbols = (oldSymbol1, newSymbol1) => {
+        for (let row = 0; row < gridSize; row++)
+            for (let column = 0; column < gridSize; column++)
+                if (gameboard[row][column] === oldSymbol1) gameboard[row][column] = newSymbol1;
+    }
+
+    return {reset, isEmpty, isFull, playTurn, getGridSize, getCellInput, getColumn, getRow, getDiagonalTLBR, getDiagonalBLTR, getBoard, getNumberOfEmptyCells, getEmptyCells, isEmptyCell, refreshBoardSymbols};
 
 })();
 
@@ -134,21 +140,18 @@ const TurnHandler = (() => {
 
     const getCurrentTurn = () => getPlayerNameFromSymbol(turn)
 
-    const changeSymbol1 = (newSymbol) => {
-        if (newSymbol !== symbol2){
-            symbol1 = newSymbol;
-            player1.setSymbol(newSymbol);
-        }
+    const refreshTurnSymbol = () => {
+        if (turn === symbol1) turn = player1.getSymbol()
+        else turn = player2.getSymbol();
     }
 
-    const changeSymbol2 = (newSymbol) => {
-        if (newSymbol !== symbol1){
-            symbol2 = newSymbol;
-            player2.setSymbol(newSymbol);
-        }
+    const refreshSymbols = () => {
+        refreshTurnSymbol();
+        symbol1 = player1.getSymbol();
+        symbol2 = player2.getSymbol();
     }
 
-    return {playTurn, getCurrentTurnSymbol, getSymbol1, getSymbol2, changeTurn, getCurrentTurn, getPlayerNameFromSymbol, changeSymbol1, changeSymbol2};
+    return {playTurn, getCurrentTurnSymbol, getSymbol1, getSymbol2, changeTurn, getCurrentTurn, getPlayerNameFromSymbol, refreshSymbols};
 })();
 
 
@@ -295,45 +298,84 @@ const MessageController = (() => {
 })();
 
 const PlayerInfoController = ((doc) => {
-    const info = doc.querySelector("#info");
 
     const playerInfoDivs = {
         player1 : doc.querySelector(player1.getquerySelector()),
         player2 : doc.querySelector(player2.getquerySelector())
     };
 
-    const drawDiv = doc.querySelector("#draw-info");
-
     const changePlayerName = (e) => {
         e.preventDefault();
         const newName = e.target.querySelector("input").value;
-        const playerIDElement = e.target.parentElement.id
+        const playerIDElement = e.target.parentElement.parentElement.id
         const playerID = playerIDElement.substring(0, playerIDElement.indexOf("-"));
         
         if (playerID === player1.getID()) player1.setName(newName);
         else player2.setName(newName);
         
         reRender();
+    }
+
+    const changeSymbol = (e) => {
+        e.preventDefault();
+        const newSymbol = e.target.querySelector("input").value;
+        const playerIDElement = e.target.parentElement.parentElement.id
+        const playerID = playerIDElement.substring(0, playerIDElement.indexOf("-"));
         
+        let oldSymbol = "";
+        if (playerID === player1.getID()) {
+            if (player2.getSymbol().toLowerCase() !== newSymbol.toLowerCase()) {
+                oldSymbol = player1.getSymbol();
+                player1.setSymbol(newSymbol);
+            }
+        }
+        else if (player1.getSymbol().toLowerCase() !== newSymbol.toLowerCase()) {
+            oldSymbol = player2.getSymbol();
+            player2.setSymbol(newSymbol);
+        }
+        
+        if (oldSymbol !== "") Gameboard.refreshBoardSymbols(oldSymbol, newSymbol);
+        reRender();
     }
 
     const editNameForm = (e) => {
-        const playerInfoDiv = e.target;
-        playerInfoDiv.innerText = "";
+        const nameDiv = e.target;
+        nameDiv.innerText = "";
         const playerNameForm = doc.createElement("form");
         playerNameForm.addEventListener("submit", changePlayerName)
 
         const formInput = doc.createElement("input");
 
         playerNameForm.appendChild(formInput);
-
-        playerInfoDiv.appendChild(playerNameForm);
+        nameDiv.appendChild(playerNameForm);
     }
+
+    const editSymbolForm = (e) => {
+        const symbolDiv = e.target;
+        symbolDiv.innerText = "";
+        const symbolForm = doc.createElement("form");
+        symbolForm.addEventListener("submit", changeSymbol)
+
+        const formInput = doc.createElement("input");
+
+        symbolForm.appendChild(formInput);
+        symbolDiv.appendChild(symbolForm);
+    }
+
 
     const addPlayer = (player) => {
         const playerInfoDiv = playerInfoDivs[player.getID()];
-        playerInfoDiv.innerText = `${player.getName()} - ${player.getSymbol()} - ${player.getWins()}`;
-        playerInfoDiv.addEventListener("click", editNameForm);
+
+        const nameDiv = playerInfoDiv.getElementsByClassName("name")[0];
+        console.log(nameDiv)
+        nameDiv.innerText = player.getName()
+        nameDiv.addEventListener("click", editNameForm);
+
+        const symbolDiv = playerInfoDiv.getElementsByClassName("symbol")[0];
+        symbolDiv.innerText = player.getSymbol();
+
+        nameDiv.addEventListener("click", editNameForm);
+        symbolDiv.addEventListener("click", editSymbolForm);
         
     };
     
@@ -348,8 +390,10 @@ const PlayerInfoController = ((doc) => {
     };
 
     const reRender = () => {
+        TurnHandler.refreshSymbols()
         render();
         MessageController.render();
+        BoardController.render();
     }
     
     return {render};
